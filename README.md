@@ -1,6 +1,12 @@
 # CV-Master :D
 
 
+## Bibliotecas
+
+imprescindible(VERCEL) -> AI SDK CORE 
+pdfparse
+i18next
+
 ## IDEA PROMPT
 ```js
 
@@ -41,3 +47,4 @@ const { object } = await generateObject({
 console.log(object);
 
 ```
+
