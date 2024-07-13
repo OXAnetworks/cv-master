@@ -6,14 +6,14 @@ import pdfParse from "pdf-parse";
 export async function POST(request: Request) {
   const formData = await request.formData();
 
-  const files = formData.getAll("files");
+  const file = formData.getAll("file");
   const profileSearch = formData.get("profileSearch");
   const skills = formData.get("skills");
   const experience = formData.get("experience");
   const language = formData.get("language");
 
   // Filtrar archivos PDF
-  const pdfFiles = files.filter((file) => file.type === "application/pdf");
+  const pdfFiles = file.filter((file) => file.type === "application/pdf");
 
   console.log(pdfFiles);
 
@@ -63,7 +63,7 @@ Responde en idioma ${language}.
 
   // Generar objeto JSON usando OpenAI
   const { object } = await generateObject({
-    model: openai("gpt-4-turbo"),
+    model: openai("gpt-4o"),
     schema: z.object({
       candidate: z.object({
         name: z.string(),
