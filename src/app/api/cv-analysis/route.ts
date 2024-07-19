@@ -1,13 +1,13 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject } from "ai";
-import { z } from "zod";
+import { any, string, z } from "zod";
 import pdfParse from "pdf-parse";
 import OpenAI from "openai";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
 
-  const file = formData.getAll("file");
+  const files = formData.getAll("files");
   const profileSearch = formData.get("profileSearch");
   const skills = formData.get("skills");
   const experience = formData.get("experience");
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
 
   // Filtrar archivos PDF
-  const pdfFiles = file.filter((file) => file.type === "application/pdf");
+  const pdfFiles = files.filter((file) => file.type === "application/pdf");
 
   console.log(pdfFiles);
 
@@ -70,7 +70,7 @@ Responde en idioma ${language}.
 
   // Generar objeto JSON usando OpenAI
   const { object } = await generateObject({
-    model: openai("gpt-4o"),
+    model: openai("gpt-4-turbo"),
     schema: z.object({
       candidate: z.object({
         name: z.string(),
