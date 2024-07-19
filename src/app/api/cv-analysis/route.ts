@@ -1,7 +1,8 @@
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
 import pdfParse from "pdf-parse";
+import OpenAI from "openai";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -11,6 +12,12 @@ export async function POST(request: Request) {
   const skills = formData.get("skills");
   const experience = formData.get("experience");
   const language = formData.get("language");
+  const openaiKey = formData.get("openaikey");
+
+  const openaiApiKey = process.env.OPENAI_API_KEY || openaiKey;
+
+  const openai = createOpenAI({ apiKey: openaiApiKey })
+
 
   // Filtrar archivos PDF
   const pdfFiles = files.filter((file) => file.type === "application/pdf");
