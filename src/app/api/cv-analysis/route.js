@@ -7,18 +7,17 @@ import { fromBuffer as convertPdfToPng } from "pdf2pic";
 // Opciones para pdf2pic
 const pdf2picOptions = {
   format: 'png',
-  width: 2550,
-  height: 3300,
+  width: 841,
+  height: 594,
   density: 330,
 };
 
 // Función para convertir PDF a imagen base64 y describirla
-const convertAndDescribePDF = async (pdfBuffer) => {
+const convertAndDescribePDF = async (pdfBuffer, openai) => {
   const convert = convertPdfToPng(pdfBuffer);
   const pageResult = await convert(1, {responseType: 'base64'});
-  console.log('cl: pageResult', pageResult)
 
-  return await describeImage(pageResult.base64);
+  return await describeImage(pageResult.base64, openai);
 };
 
 const returnPrompt = (pdfTexts, profileSearch, skills, experience, language) => {
@@ -60,10 +59,9 @@ const extractTextFromPDF = async (pdfBuffer) => {
 };
 
 // Función para describir la imagen utilizando GPT-4
-const describeImage = async (base64Img) => {
-  console.log('cl: base64Img', base64Img)
+const describeImage = async (base64Img, openai) => {
   const result = await generateText({
-    model: "gpt-4o-mini",
+    model: openai,
     messages: [
       {
         role: 'user',
@@ -73,15 +71,15 @@ const describeImage = async (base64Img) => {
       }
     ],
   });
-
-  return result.choices[0].message.text;
+  console.log('cl: result', result)
+  return result.text;
 };
 
 // Procesar un PDF, extrayendo texto y descripción de imagen
-const processPdf = async (file) => {
+const processPdf = async (file, openai) => {
   const pdfBuffer = await file.arrayBuffer();
   const text = await extractTextFromPDF(Buffer.from(pdfBuffer));
-  const description = await convertAndDescribePDF(Buffer.from(pdfBuffer));
+  const description = await convertAndDescribePDF(Buffer.from(pdfBuffer), openai);
   return { text, description };
 }
 
@@ -99,8 +97,8 @@ export async function POST(request) {
   const openai = createOpenAI({ apiKey: openaiApiKey });
   const pdfFiles = files.filter((file) => file.type === "application/pdf");
 
-  const file = await processPdf(pdfFiles[0]);
-
+  const file = await processPdf(pdfFiles[0], openai("gpt-4o-mini"));
+  console.log('cl: prompt', returnPrompt(file, profileSearch, skills, experience, language))
   // Generar objeto JSON usando OpenAI
   const { object } = await generateObject({
     model: openai("gpt-4o-mini"),
