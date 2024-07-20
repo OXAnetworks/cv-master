@@ -2,9 +2,8 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { any, string, z } from "zod";
 import pdfParse from "pdf-parse";
-import OpenAI from "openai";
 
-export async function POST(request: Request) {
+export async function POST(request) {
   const formData = await request.formData();
 
   const files = formData.getAll("files");
@@ -22,10 +21,8 @@ export async function POST(request: Request) {
   // Filtrar archivos PDF
   const pdfFiles = files.filter((file) => file.type === "application/pdf");
 
-  console.log(pdfFiles);
-
   // Función para extraer texto de un PDF
-  const extractTextFromPDF = async (pdfBuffer: any) => {
+  const extractTextFromPDF = async (pdfBuffer) => {
     try {
       const data = await pdfParse(pdfBuffer);
       return data.text;
@@ -36,7 +33,7 @@ export async function POST(request: Request) {
 
   // Extraer texto de todos los archivos PDF
   const extractedTexts = await Promise.all(
-    pdfFiles.map(async (file: any) => {
+    pdfFiles.map(async (file) => {
       const fileBuffer = await file.arrayBuffer();
       const pdfBuffer = Buffer.from(fileBuffer);
       return extractTextFromPDF(pdfBuffer);
@@ -70,7 +67,7 @@ Responde en idioma ${language}.
 
   // Generar objeto JSON usando OpenAI
   const { object } = await generateObject({
-    model: openai("gpt-4-turbo"),
+    model: openai("gpt-4o-mini"),
     schema: z.object({
       candidate: z.object({
         name: z.string(),
