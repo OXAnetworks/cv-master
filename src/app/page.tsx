@@ -35,7 +35,7 @@ export default function Home() {
       data.append("skills", formData.skills);
       data.append("experience", formData.experience);
       data.append("language", formData.language);
-      data.append("file", file);
+      data.append("files", file);
 
       try {
         const response = await fetch("/api/cv-analysis", {
