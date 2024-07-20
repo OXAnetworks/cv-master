@@ -7,9 +7,9 @@ import { fromBuffer as convertPdfToPng } from "pdf2pic";
 // Opciones para pdf2pic
 const pdf2picOptions = {
   format: 'png',
-  width: 841,
-  height: 594,
-  density: 330,
+  width: 1240,
+  height: 1754,
+  density: 150,
 };
 
 // Función para convertir PDF a imagen base64 y describirla
@@ -65,10 +65,14 @@ const describeImage = async (base64Img, openai) => {
     messages: [
       {
         role: 'user',
-        content: "Describe this image",
-        type: 'image',
-        image: base64Img
-      }
+        content: [
+          { type: 'text', text: 'Describe the image in detail.' },
+          {
+            type: 'image',
+            image: base64Img,
+          },
+        ],
+      },
     ],
   });
   console.log('cl: result', result)
@@ -97,7 +101,7 @@ export async function POST(request) {
   const openai = createOpenAI({ apiKey: openaiApiKey });
   const pdfFiles = files.filter((file) => file.type === "application/pdf");
 
-  const file = await processPdf(pdfFiles[0], openai("gpt-4o-mini"));
+  const file = await processPdf(pdfFiles[0], openai("gpt-4-turbo"));
   console.log('cl: prompt', returnPrompt(file, profileSearch, skills, experience, language))
   // Generar objeto JSON usando OpenAI
   const { object } = await generateObject({
