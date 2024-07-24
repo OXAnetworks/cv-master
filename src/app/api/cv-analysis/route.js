@@ -66,7 +66,7 @@ const describeImage = async (base64Img, openai) => {
       {
         role: 'user',
         content: [
-          { type: 'text', text: 'Describe the image in detail.' },
+          { type: 'text', text: 'Describe la imagen de perfil del curriculum.' },
           {
             type: 'image',
             image: base64Img,
