@@ -1,12 +1,13 @@
-import AWS from 'aws-sdk';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.S3_ACCES_KEY,
-  secretAccessKey: process.env.S3_SECRET_KEY,
-  endpoint: process.env.ENDPOINT,
+const s3Client = new S3Client({
   region: process.env.REGION,
-  s3ForcePathStyle: true
+  endpoint: process.env.ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.S3_ACCES_KEY,
+    secretAccessKey: process.env.S3_SECRET_KEY
+  },
+  forcePathStyle: true // Configuración equivalente a s3ForcePathStyle
 });
 
 export async function POST(request) {
@@ -27,7 +28,8 @@ export async function POST(request) {
 
   try {
     // La forma de crear una carpeta en S3 es subir un objeto vacío con el sufijo "/"
-    await s3.putObject(params).promise();
+    const putCommand = new PutObjectCommand(params);
+    await s3Client.send(putCommand);
     return new Response(`Folder ${folderName} created successfully at path ${userName}/${folderName}`, { status: 201 });
   } catch (error) {
     console.error(error);
