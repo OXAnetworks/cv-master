@@ -51,10 +51,10 @@ export default function Editor() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (key === "" || key === undefined) {
+    /*if (key === "" || key === undefined) {
       alert("Please enter your OpenAI API key");
       return;
-    }
+    }*/
     setLoading(true);
 
     console.log("FILE:", selectedFiles);
