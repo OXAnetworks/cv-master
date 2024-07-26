@@ -7,14 +7,12 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { IconHome, IconSearch, IconSettings } from "@tabler/icons-react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { IconHome } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { Language } from "./Language";
 
 export default function Navbar() {
   let pathname = usePathname();
@@ -31,13 +29,13 @@ export default function Navbar() {
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          {pathname.split("/").map((path, index) => {
+          {/* {pathname.split("/").map((path, index) => {
             if (path === "") return null;
             return (
               <>
                 <BreadcrumbItem key={path}>
                   <BreadcrumbLink asChild className="capitalize">
-                    <Link href={pathname.split(path)[1]}>{path}</Link>
+                    <Link href={pathname.split(path)[0]}>{path}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 {index < pathname.split("/").length - 1 && (
@@ -45,17 +43,18 @@ export default function Navbar() {
                 )}
               </>
             );
-          })}
+          })} */}
         </BreadcrumbList>
       </Breadcrumb>
 
       <div className="flex items-center gap-2">
-        {/* <ToggleTheme /> */}
-        <Button asChild size={"icon"} variant={pathname === "/settings" ? "secondary" : "outline"}>
+        <ToggleTheme />
+        <Language />
+        {/* <Button asChild size={"icon"} variant={pathname === "/settings" ? "secondary" : "outline"}>
           <Link href="/settings">
             <IconSettings />
           </Link>
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

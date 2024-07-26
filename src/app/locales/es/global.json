@@ -1,0 +1,9 @@
+{
+  "NEW_VACANCY_TITLE": "Crear una nueva vacante",
+  "NEW_VACANCY_DESCRIPTION": "Crearás una nueva vacante donde podrás agregar criterios de búsqueda, detalles de la vacante y CV de los candidatos para su evaluación.",
+  "NEW_VACANCY_PLACEHOLDER": "Desarrollador, Jun 2024",
+  "NEW_VACANCY_ERROR_MIN": "El título debe tener al menos 4 caracteres",
+  "NEW_VACANCY_ERROR_MAX": "El título debe tener menos de 50 caracteres",
+  "NEW_VACANCY_ERROR_REQUIRED": "El título es requerido",
+  "NEW_VACANCY_ERROR_VALID": "El título no es válido"
+}
