@@ -7,3 +7,12 @@ export type CVResult = {
   isApproved: boolean;
   stars: number;
 };
+
+export type Vacancy = {
+  id: string;
+  created_at: string;
+  s3_route: string;
+  name: string;
+  requirements: JSON;
+  user_id: string;
+};

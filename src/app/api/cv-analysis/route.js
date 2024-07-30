@@ -3,24 +3,41 @@ import { generateObject, generateText } from "ai";
 import { z } from "zod";
 import pdfParse from "pdf-parse";
 import { fromBuffer as convertPdfToPng } from "pdf2pic";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 // Opciones para pdf2pic
 const pdf2picOptions = {
-  format: 'png',
+  format: "png",
   width: 1240,
   height: 1754,
   density: 150,
 };
 
+const s3Client = new S3Client({
+  region: process.env.REGION,
+  endpoint: process.env.ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.S3_ACCES_KEY,
+    secretAccessKey: process.env.S3_SECRET_KEY,
+  },
+  forcePathStyle: true, // Configuración equivalente a s3ForcePathStyle
+});
+
 // Función para convertir PDF a imagen base64 y describirla
 const convertAndDescribePDF = async (pdfBuffer, openai) => {
   const convert = convertPdfToPng(pdfBuffer);
-  const pageResult = await convert(1, {responseType: 'base64'});
+  const pageResult = await convert(1, { responseType: "base64" });
 
   return await describeImage(pageResult.base64, openai);
 };
 
-const returnPrompt = (pdfTexts, profileSearch, skills, experience, language) => {
+const returnPrompt = (
+  pdfTexts,
+  profileSearch,
+  skills,
+  experience,
+  language
+) => {
   const assistantPrompt = `
 Eres una asistente de recursos humanos que busca a profesionales. Tu labor va a ser revisar currículums y seleccionar candidatos conforme a lo que se te pida. Asegúrate de tener en cuenta habilidades técnicas, experiencia laboral y cualquier otra competencia relevante para el puesto.
   `;
@@ -53,7 +70,7 @@ const extractTextFromPDF = async (pdfBuffer) => {
     const data = await pdfParse(pdfBuffer);
     return data.text;
   } catch (error) {
-    console.error('Error extrayendo texto del PDF:', error);
+    console.error("Error extrayendo texto del PDF:", error);
     return "";
   }
 };
@@ -64,18 +81,21 @@ const describeImage = async (base64Img, openai) => {
     model: openai,
     messages: [
       {
-        role: 'user',
+        role: "user",
         content: [
-          { type: 'text', text: 'Describe la imagen de perfil del curriculum.' },
           {
-            type: 'image',
+            type: "text",
+            text: "Describe la imagen de perfil del curriculum.",
+          },
+          {
+            type: "image",
             image: base64Img,
           },
         ],
       },
     ],
   });
-  console.log('cl: result', result)
+  console.log("cl: result", result);
   return result.text;
 };
 
@@ -83,9 +103,12 @@ const describeImage = async (base64Img, openai) => {
 const processPdf = async (file, openai) => {
   const pdfBuffer = await file.arrayBuffer();
   const text = await extractTextFromPDF(Buffer.from(pdfBuffer));
-  const description = await convertAndDescribePDF(Buffer.from(pdfBuffer), openai);
+  const description = await convertAndDescribePDF(
+    Buffer.from(pdfBuffer),
+    openai
+  );
   return { text, description };
-}
+};
 
 export async function POST(request) {
   const formData = await request.formData();
@@ -96,26 +119,58 @@ export async function POST(request) {
   const experience = formData.get("experience");
   const language = formData.get("language");
   const openaiKey = formData.get("openaikey");
+  const route = formData.get("route");
 
   const openaiApiKey = process.env.OPENAI_API_KEY || openaiKey;
   const openai = createOpenAI({ apiKey: openaiApiKey });
   const pdfFiles = files.filter((file) => file.type === "application/pdf");
 
+  const fileContent = await pdfFiles[0].arrayBuffer();
+  const fileName = pdfFiles[0].name;
+
+  const params = {
+    Bucket: process.env.BUCKET,
+    Key: `${route}${fileName}`,
+    Body: fileContent,
+    ContentType: "application/pdf",
+  };
+
+  try {
+    // Sube el archivo a S3
+    const command = new PutObjectCommand(params);
+    const data = await s3Client.send(command);
+    console.log(`Archivo subido con éxito a ${data.Location}`);
+  } catch (error) {
+    return new Response(
+      JSON.stringify({
+        error: "Error subiendo archivo a S3",
+        message: error.message,
+      }),
+      { status: 500 }
+    );
+  }
+
   const file = await processPdf(pdfFiles[0], openai("gpt-4-turbo"));
-  console.log('cl: prompt', returnPrompt(file, profileSearch, skills, experience, language))
+  console.log(
+    "cl: prompt",
+    returnPrompt(file, profileSearch, skills, experience, language)
+  );
   // Generar objeto JSON usando OpenAI
   const { object } = await generateObject({
     model: openai("gpt-4o-mini"),
     schema: z.object({
-      candidate: z.object({
-        name: z.string(),
-        skills: z.array(z.string()),
-        experience: z.array(z.string()),
-        resume: z.string(),
-        why: z.string(),
-        isApproved: z.boolean(),
-        stars: z.number(),
-      }).optional().nullable(),
+      candidate: z
+        .object({
+          name: z.string(),
+          skills: z.array(z.string()),
+          experience: z.array(z.string()),
+          resume: z.string(),
+          why: z.string(),
+          isApproved: z.boolean(),
+          stars: z.number(),
+        })
+        .optional()
+        .nullable(),
     }),
     prompt: returnPrompt(file, profileSearch, skills, experience, language),
   });

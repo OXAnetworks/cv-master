@@ -45,6 +45,7 @@ export default async function RootLayout({
             </Providers>
           </KeyProvider>
         </TranslationsProvider>
+        <script src="https://accounts.google.com/gsi/client" async></script>
       </body>
     </html>
   );

@@ -1,38 +1,69 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { createClient } from "@/utils/supabase/server";
+import { NextResponse } from "next/server";
 
 const s3Client = new S3Client({
   region: process.env.REGION,
   endpoint: process.env.ENDPOINT,
   credentials: {
     accessKeyId: process.env.S3_ACCES_KEY,
-    secretAccessKey: process.env.S3_SECRET_KEY
+    secretAccessKey: process.env.S3_SECRET_KEY,
   },
-  forcePathStyle: true // Configuración equivalente a s3ForcePathStyle
+  forcePathStyle: true, // Configuración equivalente a s3ForcePathStyle
 });
 
 export async function POST(request) {
   const formData = await request.formData();
-  const userName = formData.get('userName');
-  const folderName = formData.get('folderName');
-  
+  const userName = formData.get("userName");
+  const folderName = formData.get("folderName");
+
   if (!userName || !folderName) {
-    return new Response('User name and folder name are required.', { status: 400 });
+    return new Response("User name and folder name are required.", {
+      status: 400,
+    });
   }
+
+  const supabase = createClient();
 
   const folderKey = `${userName}/${folderName}/`;
 
   const params = {
     Bucket: process.env.BUCKET, // Nombre del bucket
-    Key: folderKey // Clave del objeto (nombre de la carpeta)
+    Key: folderKey, // Clave del objeto (nombre de la carpeta)
   };
+
+  const { data, error } = await supabase
+    .from("vacancies")
+    .insert([
+      {
+        s3_route: folderKey,
+        name: folderName,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error(error);
+    return new Response("Error creating folder in Supabase.", {
+      status: 500,
+    });
+  }
+
+  const id = data[0].id;
 
   try {
     // La forma de crear una carpeta en S3 es subir un objeto vacío con el sufijo "/"
     const putCommand = new PutObjectCommand(params);
     await s3Client.send(putCommand);
-    return new Response(`Folder ${folderName} created successfully at path ${userName}/${folderName}`, { status: 201 });
+    return NextResponse.json(
+      {
+        message: `Folder ${folderName} created successfully at path ${userName}/${folderName}`,
+        id,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
-    return new Response('Error creating folder in S3.', { status: 500 });
+    return new Response("Error creating folder in S3.", { status: 500 });
   }
 }

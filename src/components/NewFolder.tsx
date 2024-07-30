@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { IconArrowRight, IconPlus } from "@tabler/icons-react";
 import { z } from "zod";
 import {
@@ -24,10 +24,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function NewFolder() {
   const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+
+  const supabase = createClient();
+
+  const handleClick = async () => {
+    const user = await supabase.auth.getUser();
+
+    if (user.data.user) {
+      setOpen(true);
+    } else {
+      router.replace("/login");
+    }
+  };
 
   const formSchema = z.object({
     title: z
@@ -43,8 +58,29 @@ export default function NewFolder() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const user = await supabase.auth.getUser();
+
+    if (!user.data.user) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("folderName", values.title);
+    formData.append("userName", user.data.user.id);
+
+    if (user.data.user) {
+      const res = await fetch("/api/create-folder", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        router.push(`/${data.id}`);
+      }
+    }
   }
 
   return (
@@ -84,7 +120,6 @@ export default function NewFolder() {
                     <IconArrowRight />
                   </Button>
                 </form>
-               
               </Form>
             </DialogDescription>
           </DialogHeader>
@@ -93,12 +128,11 @@ export default function NewFolder() {
 
       <button
         className="w-full flex flex-col gap-1 cursor-pointer"
-        onClick={() => setOpen(true)}
+        onClick={handleClick}
       >
         <div className="bg-muted aspect-square w-full rounded-md flex justify-center items-center">
           <IconPlus size={48} className="text-muted-foreground" />
         </div>
-        {/* <p className="text-center">Nueva vacante</p> */}
       </button>
     </>
   );

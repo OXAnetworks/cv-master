@@ -7,15 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useKey } from "@/context/KeyContext";
-import { CVResult } from "@/lib/type";
+import { CVResult, Vacancy } from "@/lib/type";
 import { IconLoader2 } from "@tabler/icons-react";
 import React, { useState } from "react";
 
-export default function Editor() {
+export default function Editor({ vacancy }: { vacancy: Vacancy | null }) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    vacancyName: "",
+    vacancyName: vacancy?.name || "",
     profileSearch: "",
     skills: "",
     experience: "",
@@ -57,8 +57,6 @@ export default function Editor() {
     }*/
     setLoading(true);
 
-    console.log("FILE:", selectedFiles);
-
     for (const file of selectedFiles) {
       const data = new FormData();
       data.append("profileSearch", formData.profileSearch);
@@ -66,9 +64,11 @@ export default function Editor() {
       data.append("experience", formData.experience);
       data.append("language", formData.language);
       data.append("files", file);
-      if(key !== undefined || key !== "") {
+      if (key !== undefined || key !== "") {
         data.append("openaikey", key);
       }
+
+      data.append("route", vacancy?.s3_route || "");
 
       try {
         const response = await fetch("/api/cv-analysis", {

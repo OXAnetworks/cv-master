@@ -13,6 +13,7 @@ import { IconHome } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Language } from "./Language";
+import User from "./User";
 
 export default function Navbar() {
   let pathname = usePathname();
@@ -55,6 +56,7 @@ export default function Navbar() {
             <IconSettings />
           </Link>
         </Button> */}
+        <User />
       </div>
     </div>
   );
