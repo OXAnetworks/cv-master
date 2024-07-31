@@ -6,6 +6,7 @@ import { Next13ProgressBar } from "next13-progressbar";
 import { toast } from "sonner";
 import { Toaster } from "./ui/sonner";
 import { useRouter } from "next/navigation";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function Providers({
   children,
@@ -43,20 +44,22 @@ export default function Providers({
   }, [apiKey]);
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      {children}
-      <Toaster />
-      <Next13ProgressBar
-        height="1.5px"
-        color="#3b82f6"
-        options={{ showSpinner: false }}
-        showOnShallow
-      />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        {children}
+        <Toaster />
+        <Next13ProgressBar
+          height="1.5px"
+          color="#3b82f6"
+          options={{ showSpinner: false }}
+          showOnShallow
+        />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

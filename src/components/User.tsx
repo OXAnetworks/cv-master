@@ -14,30 +14,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IconUser } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function User() {
   const { t } = useTranslation();
 
-  const supabase = createClient();
-
-  const [user, setUser] = useState<any>(null);
-
-  const logout = async () => {
-    await supabase.auth.signOut();
-  };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await supabase.auth.getUser();
-      if (user.data.user) {
-        setUser(user.data.user);
-      } else {
-        console.error("No user found");
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { user, logout } = useAuth();
 
   return (
     <DropdownMenu>

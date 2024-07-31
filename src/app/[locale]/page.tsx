@@ -2,16 +2,19 @@
 
 import Folder from "@/components/Folder";
 import NewFolder from "@/components/NewFolder";
+import { useAuth } from "@/context/AuthContext";
 import { Vacancy } from "@/lib/type";
 import { IconFolderFilled } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  const { user } = useAuth();
   const [data, setData] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const response = await fetch("/api/get-vacancies");
 
       if (response.ok) {
@@ -23,8 +26,13 @@ export default function Home() {
       setLoading(false);
     };
 
-    fetchData();
-  }, []);
+    if (user) {
+      fetchData();
+    } else {
+      setData([]);
+      setLoading(false);
+    }
+  }, [user]);
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
