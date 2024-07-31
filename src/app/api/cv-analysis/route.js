@@ -4,6 +4,8 @@ import { z } from "zod";
 import pdfParse from "pdf-parse";
 import { fromBuffer as convertPdfToPng } from "pdf2pic";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { createClient } from "@/utils/supabase/server";
+import { NextResponse } from "next/server";
 
 // Opciones para pdf2pic
 const pdf2picOptions = {
@@ -135,6 +137,20 @@ export async function POST(request) {
     ContentType: "application/pdf",
   };
 
+  const supabase = createClient();
+
+  const user = await supabase.auth.getUser();
+
+  if (!user.data.user) {
+    return new Response(
+      JSON.stringify({
+        error: "Unauthorized",
+        message: error.message,
+      }),
+      { status: 401 }
+    );
+  }
+
   try {
     // Sube el archivo a S3
     const command = new PutObjectCommand(params);
@@ -174,6 +190,24 @@ export async function POST(request) {
     }),
     prompt: returnPrompt(file, profileSearch, skills, experience, language),
   });
+
+  const { data, error: resumeError } = await supabase.from("resumes").insert([
+    {
+      s3_route: `${route}${fileName}`,
+      vacancy_id: route.split("/")[0],
+      result: object.candidate,
+    },
+  ]);
+
+  if (resumeError) {
+    return new Response(
+      JSON.stringify({
+        error: "Error insertando en la base de datos",
+        message: resumeError.message,
+      }),
+      { status: 500 }
+    );
+  }
 
   return new Response(JSON.stringify(object), { status: 200 });
 }

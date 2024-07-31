@@ -40,7 +40,7 @@ export default function NewFolder() {
     if (user.data.user) {
       setOpen(true);
     } else {
-      router.replace("/login");
+      router.push("/login");
     }
   };
 
@@ -48,7 +48,7 @@ export default function NewFolder() {
     title: z
       .string()
       .min(4, t("NEW_VACANCY_ERROR_MIN"))
-      .max(30, t("NEW_VACANCY_ERROR_MAX")),
+      .max(40, t("NEW_VACANCY_ERROR_MAX")),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -90,9 +90,7 @@ export default function NewFolder() {
           <DialogHeader>
             <DialogTitle>{t("NEW_VACANCY_TITLE")}</DialogTitle>
             <DialogDescription>
-              Crearas una nueva vacante donde podras agregar los criterios de
-              busqueda, detalles de la vacante y las CVs de los candidatos para
-              su evaluacion.
+              {t("NEW_VACANCY_DESCRIPTION")}
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}

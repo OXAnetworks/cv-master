@@ -49,7 +49,7 @@ export function Language() {
           <span className="sr-only">Language</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="center">
         <DropdownMenuItem onClick={() => handleChange("en")}>
           English
         </DropdownMenuItem>

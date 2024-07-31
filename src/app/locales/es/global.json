@@ -5,5 +5,9 @@
   "NEW_VACANCY_ERROR_MIN": "El título debe tener al menos 4 caracteres",
   "NEW_VACANCY_ERROR_MAX": "El título debe tener menos de 50 caracteres",
   "NEW_VACANCY_ERROR_REQUIRED": "El título es requerido",
-  "NEW_VACANCY_ERROR_VALID": "El título no es válido"
+  "NEW_VACANCY_ERROR_VALID": "El título no es válido",
+
+  "MY_ACCOUNT": "Mi cuenta",
+  "LOGOUT": "Cerrar sesión",
+  "LOGIN": "Iniciar sesión"
 }

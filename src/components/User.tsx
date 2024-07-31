@@ -1,21 +1,71 @@
-"use client"
+"use client";
 
-import { createClient } from '@/utils/supabase/client';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { IconUser } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
+import Link from "next/link";
 
 export default function User() {
-    const supabase = createClient();
+  const { t } = useTranslation();
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const user = await supabase.auth.getUser();
-            console.log(user);
-        }
+  const supabase = createClient();
 
-        fetchUser();
-    }, [])
+  const [user, setUser] = useState<any>(null);
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await supabase.auth.getUser();
+      if (user.data.user) {
+        setUser(user.data.user);
+      } else {
+        console.error("No user found");
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
-    <div>User</div>
-  )
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Avatar>
+          <AvatarImage src={user?.user_metadata.avatar_url} />
+          <AvatarFallback className="border border-input bg-background hover:bg-accent hover:text-accent-foreground">
+            <IconUser />
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {user && (
+          <>
+            <DropdownMenuLabel>{t("MY_ACCOUNT")}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={logout}>{t("LOGOUT")}</DropdownMenuItem>
+          </>
+        )}
+
+        {!user && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/login">{t("LOGIN")}</Link>
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
