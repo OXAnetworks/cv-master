@@ -9,21 +9,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { useKey } from "@/context/KeyContext";
 import { CVResult, Vacancy } from "@/lib/type";
 import { IconLoader2 } from "@tabler/icons-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function Editor({ vacancy }: { vacancy: Vacancy | null }) {
+export default function Editor({
+  vacancy,
+  CVList,
+}: {
+  vacancy: Vacancy | null;
+  CVList: CVResult[];
+}) {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     vacancyName: vacancy?.name || "",
-    profileSearch: "",
-    skills: "",
-    experience: "",
-    language: "",
+    vacancyId: vacancy?.id || "",
+    profileSearch: vacancy?.requirements.profileSearch || "",
+    skills: vacancy?.requirements.skills || "",
+    experience: vacancy?.requirements.experience || "",
+    language: vacancy?.requirements.language || "",
     files: [],
   });
 
-  const [list, setList] = useState<CVResult[]>([]);
+  const [list, setList] = useState<CVResult[]>(CVList || []);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -69,6 +76,8 @@ export default function Editor({ vacancy }: { vacancy: Vacancy | null }) {
       }
 
       data.append("route", vacancy?.s3_route || "");
+      data.append("vacancyName", formData.vacancyName);
+      data.append("vacancyId", formData.vacancyId);
 
       try {
         const response = await fetch("/api/cv-analysis", {

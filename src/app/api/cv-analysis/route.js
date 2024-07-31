@@ -122,6 +122,7 @@ export async function POST(request) {
   const language = formData.get("language");
   const openaiKey = formData.get("openaikey");
   const route = formData.get("route");
+  const vacancyId = formData.get("vacancyId");
 
   const openaiApiKey = process.env.OPENAI_API_KEY || openaiKey;
   const openai = createOpenAI({ apiKey: openaiApiKey });
@@ -194,7 +195,7 @@ export async function POST(request) {
   const { data, error: resumeError } = await supabase.from("resumes").insert([
     {
       s3_route: `${route}${fileName}`,
-      vacancy_id: route.split("/")[0],
+      vacancy_id: vacancyId,
       result: object.candidate,
     },
   ]);
@@ -208,6 +209,17 @@ export async function POST(request) {
       { status: 500 }
     );
   }
+
+  const { error } = await supabase
+    .from("vacancies")
+    .update({
+      requirements: {
+        profileSearch,
+        skills,
+        experience,
+      },
+    })
+    .eq("id", vacancyId);
 
   return new Response(JSON.stringify(object), { status: 200 });
 }

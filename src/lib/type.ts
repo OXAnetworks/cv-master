@@ -13,6 +13,6 @@ export type Vacancy = {
   created_at: string;
   s3_route: string;
   name: string;
-  requirements: JSON;
+  requirements: any;
   user_id: string;
 };
