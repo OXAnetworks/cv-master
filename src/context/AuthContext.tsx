@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    router.refresh();
+    router.push("/");
   };
 
   const getUser = async () => {
