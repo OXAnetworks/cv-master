@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Toaster } from "./ui/sonner";
 import { useRouter } from "next/navigation";
 import { AuthProvider } from "@/context/AuthContext";
+import { VacancyProvider } from "@/context/VacancySelect";
 
 export default function Providers({
   children,
@@ -51,14 +52,16 @@ export default function Providers({
         enableSystem
         disableTransitionOnChange
       >
-        {children}
-        <Toaster />
-        <Next13ProgressBar
-          height="1.5px"
-          color="#3b82f6"
-          options={{ showSpinner: false }}
-          showOnShallow
-        />
+        <VacancyProvider>
+          {children}
+          <Toaster />
+          <Next13ProgressBar
+            height="1.5px"
+            color="#3b82f6"
+            options={{ showSpinner: false }}
+            showOnShallow
+          />
+        </VacancyProvider>
       </ThemeProvider>
     </AuthProvider>
   );

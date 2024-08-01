@@ -14,9 +14,18 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Language } from "./Language";
 import User from "./User";
+import { useVacancy } from "@/context/VacancySelect";
+
+const uuidRegex =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i;
+
+function includesUUID(pathname: string) {
+  return uuidRegex.test(pathname);
+}
 
 export default function Navbar() {
   let pathname = usePathname();
+  const { selectedVacancy } = useVacancy();
 
   return (
     <div className="w-full p-4 bg-card border border-border rounded-md flex justify-between items-center">
@@ -45,6 +54,9 @@ export default function Navbar() {
               </>
             );
           })} */}
+          <BreadcrumbLink>
+            {(selectedVacancy && includesUUID(pathname)) && selectedVacancy.name}
+          </BreadcrumbLink>
         </BreadcrumbList>
       </Breadcrumb>
 

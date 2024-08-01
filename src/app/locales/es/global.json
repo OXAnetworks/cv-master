@@ -9,5 +9,18 @@
 
   "MY_ACCOUNT": "Mi cuenta",
   "LOGOUT": "Cerrar sesión",
-  "LOGIN": "Iniciar sesión"
+  "LOGIN": "Iniciar sesión",
+
+  "VACANCY_NAME": "Nombre de la vacante",
+  "VACANCY_NAME_PLACEHOLDER": "Desarrollador, Jun 2024",
+  "VACANCY_PROFILE_SEARCH": "Perfil de búsqueda",
+  "VACANCY_PROFILE_SEARCH_PLACEHOLDER": "p.ej. Desarrollador, Diseñador, etc.",
+  "VACANCY_PROFILE_SEARCH_ERROR_MIN": "El perfil de búsqueda debe tener al menos 4 caracteres",
+  "VACANCY_SKILLS": "Habilidades",
+  "VACANCY_SKILLS_PLACEHOLDER": "p.ej. JavaScript, React, Node.js",
+  "VACANCY_SKILLS_ERROR_MIN": "Las habilidades deben tener al menos 4 caracteres",
+  "VACANCY_EXPERIENCE": "Experiencia",
+  "VACANCY_EXPERIENCE_PLACEHOLDER": "p.ej. 2",
+
+  "DRAG_HERE": "Arrastra aquí o haz clic para seleccionar"
 }

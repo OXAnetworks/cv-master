@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useKey } from "@/context/KeyContext";
+import { useVacancy } from "@/context/VacancySelect";
 import { CVResult, Vacancy } from "@/lib/type";
 import { IconLoader2 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Editor({
   vacancy,
@@ -18,15 +20,19 @@ export default function Editor({
   vacancy: Vacancy | null;
   CVList: CVResult[];
 }) {
+  const { setSelectedVacancy } = useVacancy();
+
+  const [t, i18n] = useTranslation("global");
+
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     vacancyName: vacancy?.name || "",
     vacancyId: vacancy?.id || "",
-    profileSearch: vacancy?.requirements.profileSearch || "",
-    skills: vacancy?.requirements.skills || "",
-    experience: vacancy?.requirements.experience || "",
-    language: vacancy?.requirements.language || "",
+    profileSearch: vacancy?.requirements?.profileSearch || "",
+    skills: vacancy?.requirements?.skills || "",
+    experience: vacancy?.requirements?.experience || "",
+    language: vacancy?.requirements?.language || i18n.language || "",
     files: [],
   });
 
@@ -101,27 +107,33 @@ export default function Editor({
     console.log("DONE");
   };
 
+  useEffect(() => {
+    if (vacancy) {
+      setSelectedVacancy(vacancy);
+    }
+  }, [vacancy]);
+
   return (
     <form onSubmit={handleSubmit} className="w-full flex gap-8 h-full">
       <div className="w-full flex-col">
         <div className="space-y-4">
           <div>
             <Label>
-              Vacancy name:
+              {t("VACANCY_NAME")}
               <Input
                 required
                 type="text"
                 name="vacancyName"
                 value={formData.vacancyName}
                 onChange={handleChange}
-                placeholder="Software Engineer, Jun 2024"
+                placeholder={t("VACANCY_NAME_PLACEHOLDER")}
               />
             </Label>
           </div>
           <Separator />
           <div>
             <Label>
-              Profile Search:
+              {t("VACANCY_PROFILE_SEARCH")}
               <Textarea
                 required
                 name="profileSearch"
@@ -134,39 +146,27 @@ export default function Editor({
           </div>
           <div>
             <Label>
-              Skills:
+              {t("VACANCY_SKILLS")}
               <Textarea
                 required
                 name="skills"
                 value={formData.skills}
                 onChange={handleChange}
                 className="min-h-[80px] resize-none"
-                placeholder="e.g. JavaScript, React, Node.js"
+                placeholder={t("VACANCY_SKILLS_PLACEHOLDER")}
               />
             </Label>
           </div>
           <div>
             <Label>
-              Experience:
+              {t("VACANCY_EXPERIENCE")}
               <Input
                 required
                 type="number"
                 name="experience"
                 value={formData.experience}
                 onChange={handleChange}
-                placeholder="e.g. 5"
-              />
-            </Label>
-          </div>
-          <div>
-            <Label>
-              Language:
-              <Input
-                type="text"
-                name="language"
-                value={formData.language}
-                onChange={handleChange}
-                placeholder="e.g. English, Spanish"
+                placeholder={t("VACANCY_EXPERIENCE_PLACEHOLDER")}
               />
             </Label>
           </div>

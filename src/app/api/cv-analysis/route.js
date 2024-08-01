@@ -60,7 +60,9 @@ ${pdfTexts.description}
 Texto de los currículums:
 ${pdfTexts.text}
 
-Dale un número de estrellas del 1 al 5 al candidato según su perfil
+Dale un número de estrellas del 1 al 5 al candidato según su perfil.
+
+Obten datos de contanto como correo y teléfono.
     
 Responde en idioma ${language}.
   `;
@@ -185,6 +187,10 @@ export async function POST(request) {
           why: z.string(),
           isApproved: z.boolean(),
           stars: z.number(),
+          contact: z.object({
+            email: z.string(),
+            phone: z.string(),
+          }),
         })
         .optional()
         .nullable(),
