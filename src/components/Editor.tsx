@@ -173,7 +173,10 @@ export default function Editor({
   }, [vacancy]);
 
   return (
-    <form onSubmit={handleSubmit} className="w-full flex gap-8 h-full">
+    <form
+      onSubmit={handleSubmit}
+      className="w-full flex flex-col md:flex-row gap-8 h-full"
+    >
       <div className="w-full flex-col">
         <div className="space-y-4">
           <div>

@@ -72,7 +72,7 @@ export default function PDFList({
 
   if (list.length > 0) {
     return (
-      <div className="w-full max-h-full bg-muted/50 dark:bg-muted/20 p-4 rounded-lg flex flex-col gap-4 overflow-hidden">
+      <div className="w-full min-h-[600px] text-sm md:text-base md:min-h-auto max-h-full bg-muted/50 dark:bg-muted/20 p-4 rounded-lg flex flex-col gap-4 overflow-hidden">
         <div
           className={`w-full h-20 p-4 rounded-lg border-4 border-border border-dashed flex justify-center items-center gap-2 ${
             isDragging ? "bg-blue-100 border-blue-400" : ""

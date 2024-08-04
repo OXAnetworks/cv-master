@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { IconArrowRight, IconPlus } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
+import { IconArrowRight, IconLoader2, IconPlus } from "@tabler/icons-react";
 import { z } from "zod";
 import {
   Dialog,
@@ -29,8 +29,9 @@ import { useRouter } from "next/navigation";
 
 export default function NewFolder() {
   const { t } = useTranslation();
-  const [open, setOpen] = React.useState(false);
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const supabase = createClient();
 
@@ -65,6 +66,8 @@ export default function NewFolder() {
       return;
     }
 
+    setLoading(true);
+
     const formData = new FormData();
     formData.append("folderName", values.title);
     formData.append("userName", user.data.user.id);
@@ -81,6 +84,10 @@ export default function NewFolder() {
         router.push(`/${data.id}`);
       }
     }
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }
 
   return (
@@ -114,8 +121,16 @@ export default function NewFolder() {
                       </FormItem>
                     )}
                   />
-                  <Button size={"icon"} className="aspect-square w-12">
-                    <IconArrowRight />
+                  <Button
+                    size={"icon"}
+                    className="aspect-square w-12"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <IconLoader2 className="animate-spin" />
+                    ) : (
+                      <IconArrowRight />
+                    )}
                   </Button>
                 </form>
               </Form>

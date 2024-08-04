@@ -24,7 +24,7 @@
 
   "DRAG_HERE": "Drag here or click to select",
 
-  "REMAINING_TIME": "Remaining Time",
+  "REMAINING_TIME": "Approximate time remaining",
   "SECOND": "second",
   "MINUTE": "minute",
   "HOUR": "hour",
@@ -57,5 +57,7 @@
   "TOGGLE_THEME": "Toggle Theme",
   "LIGHT": "Light",
   "DARK": "Dark",
-  "SYSTEM": "System"
+  "SYSTEM": "System",
+
+  "SIGN_IN_WITH_GOOGLE": "Sign in with Google"
 }

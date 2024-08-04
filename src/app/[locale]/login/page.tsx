@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { createClient } from "@/utils/supabase/client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const { signInWithGoogle } = useAuth();
+  const [t] = useTranslation("global");
 
   return (
     <div className="size-full flex justify-center items-center">
@@ -39,7 +41,7 @@ export default function Login() {
             fill="#EB4335"
           />
         </svg>
-        Sign in with Google
+        {t("SIGN_IN_WITH_GOOGLE")}
       </Button>
     </div>
   );

@@ -76,7 +76,7 @@ export default function ResumeInfo({ resume }: { resume: Resume }) {
   return (
     <>
       <Dialog open={openPdfViewer} onOpenChange={setOpenPdfViewer}>
-        <DialogContent className="max-w-[70%] h-[95%] ">
+        <DialogContent className="max-w-full md:max-w-[70%] h-full md:h-[95%] ">
           <DialogHeader>
             <DialogTitle className="hidden">{resume.result.name}</DialogTitle>
             <div className="w-full h-full rounded-md overflow-hidden">
@@ -87,11 +87,11 @@ export default function ResumeInfo({ resume }: { resume: Resume }) {
       </Dialog>
 
       <div className="flex flex-col gap-4">
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <button
             disabled={loadingPdf}
             onClick={() => setOpenPdfViewer(true)}
-            className="w-48 aspect-[1/1.41] border rounded-md border-border p-2 group cursor-pointer relative flex justify-center items-center disabled:cursor-progress"
+            className="w-full md:w-48 aspect-[1/1.41] border rounded-md border-border p-2 group cursor-pointer relative flex justify-center items-center disabled:cursor-progress"
           >
             {loadingPdf && (
               <IconLoader2 className="animate-spin absolute z-50 text-primary" />
@@ -154,8 +154,8 @@ export default function ResumeInfo({ resume }: { resume: Resume }) {
             </div>
           </div>
         </div>
-        <div className="flex gap-4 ">
-          <div className="p-4 border border-border rounded-md w-1/3">
+        <div className="flex gap-4 flex-col md:flex-row">
+          <div className="p-4 border border-border rounded-md w-full md:w-1/3">
             <h2 className="text-sm opacity-70 mb-1">{t("EXPERIENCE")}</h2>
             {resume.result.experience.map((exp, i) => (
               <ul key={i} className="list-disc list-inside space-y-2">
@@ -163,7 +163,7 @@ export default function ResumeInfo({ resume }: { resume: Resume }) {
               </ul>
             ))}
           </div>
-          <div className="p-4 border border-border rounded-md w-1/3">
+          <div className="p-4 border border-border rounded-md w-full md:w-1/3">
             <h2 className="text-sm opacity-70 mb-1">{t("SKILLS")}</h2>
             {resume.result.skills.map((skill, i) => (
               <ul key={i} className="list-disc list-inside">
@@ -171,7 +171,7 @@ export default function ResumeInfo({ resume }: { resume: Resume }) {
               </ul>
             ))}
           </div>
-          <div className="p-4 border border-border rounded-md w-1/3">
+          <div className="p-4 border border-border rounded-md w-full md:w-1/3">
             <h2 className="text-sm opacity-70 mb-1">{t("CONTACT")}</h2>
             <ul className="list-disc list-inside">
               <li>{resume.result.contact.email}</li>
