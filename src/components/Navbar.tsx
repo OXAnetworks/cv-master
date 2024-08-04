@@ -48,7 +48,7 @@ export default function Navbar() {
                 <BreadcrumbLink
                   className="cursor-pointer"
                   onClick={() => {
-                    router.back();
+                    router.push(`/${selectedVacancy.id}`);
                   }}
                 >
                   {selectedVacancy.name}

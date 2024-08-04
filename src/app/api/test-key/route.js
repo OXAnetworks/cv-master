@@ -23,7 +23,7 @@ export async function POST(request) {
       model: openai("gpt-4o-mini"),
       temperature: 1,
       prompt:
-        "Genera un mensaje corto y gracioso diciendo que tu clave de API de OpenAI es correcta y ha sido guardada. asi como que no esta segura del todo.",
+        "Genera un mensaje corto y gracioso, con un estilo de humor sarcástico, que diga que tu clave de API de OpenAI es correcta y ha sido guardada, pero que no está del todo segura. El mensaje debe ser aleatorio y único cada vez que se genere.",
     });
 
     return new Response(

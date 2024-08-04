@@ -197,11 +197,7 @@ export async function POST(request) {
           stars: z.number(),
           contact: z.object({
             email: z.string(),
-            phone: z
-              .string()
-              .regex(
-                /^(?:\+?(\d{1,3}))?[\s.-]?(\(?\d{1,4}\)?)?[\s.-]?(\d{1,4})[\s.-]?(\d{1,4})[\s.-]?(\d{1,9})$/
-              ),
+            phone: z.string(),
           }),
         })
         .optional()
@@ -275,7 +271,10 @@ export async function POST(request) {
     );
   }
 
-  return new Response(JSON.stringify({ id: resumeData.id, ...object.candidate }), {
-    status: 200,
-  });
+  return new Response(
+    JSON.stringify({ id: resumeData.id, ...object.candidate }),
+    {
+      status: 200,
+    }
+  );
 }

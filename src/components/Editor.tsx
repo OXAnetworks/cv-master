@@ -29,7 +29,16 @@ export default function Editor({
   const [loading, setLoading] = useState(false);
   const [remainingTime, setRemainingTime] = useState(0);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    vacancyName: string;
+    vacancyId: string;
+    profileSearch: any;
+    skills: any;
+    experience: any;
+    language: any;
+    openaikey: string;
+    files: File[];
+  }>({
     vacancyName: vacancy?.name || "",
     vacancyId: vacancy?.id || "",
     profileSearch: vacancy?.requirements?.profileSearch || "",
@@ -64,16 +73,23 @@ export default function Editor({
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    const { name, value, files } = e.target;
-    if (name === "files") {
+    const target = e.target as HTMLInputElement; // Asegúrate de que es un HTMLInputElement
+    const { name, value, files } = target;
+
+    if (name === "files" && files) {
       const validFiles = Array.from(files).filter(
         (file) => file.type === "application/pdf"
       );
+
       if (validFiles.length !== files.length) {
         alert("Only PDF files are allowed");
       }
-      setFormData((prevData) => ({ ...prevData, files: validFiles }));
-      setSelectedFiles(validFiles);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        files: validFiles as File[], // Asegúrate de que el tipo sea File[]
+      }));
+      setSelectedFiles(validFiles as File[]);
     } else {
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
