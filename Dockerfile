@@ -22,8 +22,10 @@ RUN npm install
 # Copia el resto de los archivos del proyecto
 COPY . .
 
+RUN npm run build
+
 # Expone el puerto que usa la aplicación
 EXPOSE 3000
 
 # Comando para iniciar la aplicación
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
