@@ -25,10 +25,13 @@ const s3Client = new S3Client({
   forcePathStyle: true, // Configuración equivalente a s3ForcePathStyle
 });
 
+let imgBase64 = "";
+
 // Función para convertir PDF a imagen base64 y describirla
 const convertAndDescribePDF = async (pdfBuffer, openai) => {
   const convert = convertPdfToPng(pdfBuffer);
   const pageResult = await convert(1, { responseType: "base64" });
+  imgBase64 = pageResult.base64;
 
   return await describeImage(pageResult.base64, openai);
 };
@@ -50,9 +53,11 @@ ${assistantPrompt}
 Buscamos específicamente un perfil con las siguientes características:
 - Puesto: ${profileSearch}
 - Habilidades: ${skills}
-- Experiencia: ${experience}
+- Experiencia: al menos ${experience} años
 
 Por favor, revisa los currículums y selecciona aquellos que más se ajusten a estos criterios. Proporcióname el nombre del candidato, sus habilidades, su experiencia y un resumen general.
+
+Tambien da el porque de tu decisión de forma detallada.
 
 Descripciones de las imágenes de los currículums:
 ${pdfTexts.description}
@@ -60,11 +65,13 @@ ${pdfTexts.description}
 Texto de los currículums:
 ${pdfTexts.text}
 
-Dale un número de estrellas del 1 al 5 al candidato según su perfil.
+Dale un número de estrellas del 1 al 5 al candidato según su perfil, se estricto en tu evaluación.
 
 Obten datos de contanto como correo y teléfono.
+
+Si no logras obtener la información solicitada, por favor, indícalo y rechaza el currículum.
     
-Responde en idioma ${language}.
+Responde en idioma ${language} y traduce todo el contenido a este mismo.
   `;
 };
 
@@ -99,7 +106,7 @@ const describeImage = async (base64Img, openai) => {
       },
     ],
   });
-  console.log("cl: result", result);
+  // console.log("cl: result", result);
   return result.text;
 };
 
@@ -118,6 +125,7 @@ export async function POST(request) {
   const formData = await request.formData();
 
   const files = formData.getAll("files");
+  const name = formData.get("name");
   const profileSearch = formData.get("profileSearch");
   const skills = formData.get("skills");
   const experience = formData.get("experience");
@@ -158,7 +166,7 @@ export async function POST(request) {
     // Sube el archivo a S3
     const command = new PutObjectCommand(params);
     const data = await s3Client.send(command);
-    console.log(`Archivo subido con éxito a ${data.Location}`);
+    // console.log(`Archivo subido con éxito a ${data.Location}`);
   } catch (error) {
     return new Response(
       JSON.stringify({
@@ -170,10 +178,10 @@ export async function POST(request) {
   }
 
   const file = await processPdf(pdfFiles[0], openai("gpt-4-turbo"));
-  console.log(
-    "cl: prompt",
-    returnPrompt(file, profileSearch, skills, experience, language)
-  );
+  // console.log(
+  //   "cl: prompt",
+  //   returnPrompt(file, profileSearch, skills, experience, language)
+  // );
   // Generar objeto JSON usando OpenAI
   const { object } = await generateObject({
     model: openai("gpt-4o-mini"),
@@ -183,13 +191,17 @@ export async function POST(request) {
           name: z.string(),
           skills: z.array(z.string()),
           experience: z.array(z.string()),
-          resume: z.string(),
+          summary: z.string(),
           why: z.string(),
           isApproved: z.boolean(),
           stars: z.number(),
           contact: z.object({
             email: z.string(),
-            phone: z.string(),
+            phone: z
+              .string()
+              .regex(
+                /^(?:\+?(\d{1,3}))?[\s.-]?(\(?\d{1,4}\)?)?[\s.-]?(\d{1,4})[\s.-]?(\d{1,4})[\s.-]?(\d{1,9})$/
+              ),
           }),
         })
         .optional()
@@ -198,13 +210,16 @@ export async function POST(request) {
     prompt: returnPrompt(file, profileSearch, skills, experience, language),
   });
 
-  const { data, error: resumeError } = await supabase.from("resumes").insert([
-    {
-      s3_route: `${route}${fileName}`,
-      vacancy_id: vacancyId,
-      result: object.candidate,
-    },
-  ]);
+  const { data, error: resumeError } = await supabase
+    .from("resumes")
+    .insert([
+      {
+        s3_route: `${route}${fileName}`,
+        vacancy_id: vacancyId,
+        result: object.candidate,
+      },
+    ])
+    .select();
 
   if (resumeError) {
     return new Response(
@@ -216,10 +231,33 @@ export async function POST(request) {
     );
   }
 
+  const resumeData = data[0];
+
+  const bufferImg = Buffer.from(imgBase64, "base64");
+
+  const { data: uplaodRes, error: uploadError } = await supabase.storage
+    .from("resumes")
+    .upload(resumeData.id + ".png", bufferImg, {
+      contentType: "image/png",
+    });
+
+  if (uploadError) {
+    return new Response(
+      JSON.stringify({
+        error: "Error subiendo imagen a Supabase Storage",
+        message: uploadError.message,
+      }),
+      { status: 500 }
+    );
+  } else {
+    // ("cl: uploadRes", uplaodRes);
+  }
+
   const { error } = await supabase
     .from("vacancies")
     .update({
       requirements: {
+        name,
         profileSearch,
         skills,
         experience,
@@ -227,5 +265,17 @@ export async function POST(request) {
     })
     .eq("id", vacancyId);
 
-  return new Response(JSON.stringify(object), { status: 200 });
+  if (error) {
+    return new Response(
+      JSON.stringify({
+        error: "Error actualizando la vacante",
+        message: error.message,
+      }),
+      { status: 500 }
+    );
+  }
+
+  return new Response(JSON.stringify({ id: resumeData.id, ...object.candidate }), {
+    status: 200,
+  });
 }

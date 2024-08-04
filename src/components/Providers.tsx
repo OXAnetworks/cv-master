@@ -8,6 +8,8 @@ import { Toaster } from "./ui/sonner";
 import { useRouter } from "next/navigation";
 import { AuthProvider } from "@/context/AuthContext";
 import { VacancyProvider } from "@/context/VacancySelect";
+import { VacanciesProvider } from "@/context/VacanciesContext";
+import { KeyProvider } from "@/context/KeyContext";
 
 export default function Providers({
   children,
@@ -16,53 +18,31 @@ export default function Providers({
   children: React.ReactNode;
   apiKey: string | undefined;
 }) {
-  let router = useRouter();
 
-  useEffect(() => {
-    if (!apiKey) {
-      toast.info("Please enter your OpenAI API key", {
-        important: true,
-        duration: 60000,
-        richColors: true,
-        action: {
-          label: "Enter your API key",
-          onClick: () => {
-            router.push("/settings");
-          },
-        },
-        actionButtonStyle: {
-          backgroundColor: "#3b82f6",
-          color: "#fff",
-        },
-        cancel: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-      });
-    }
-  }, [apiKey]);
 
   return (
     <AuthProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <VacancyProvider>
-          {children}
-          <Toaster />
-          <Next13ProgressBar
-            height="1.5px"
-            color="#3b82f6"
-            options={{ showSpinner: false }}
-            showOnShallow
-          />
-        </VacancyProvider>
-      </ThemeProvider>
+      <KeyProvider apiKey={apiKey}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <VacanciesProvider>
+            <VacancyProvider>
+              {children}
+              <Toaster />
+              <Next13ProgressBar
+                height="1.5px"
+                color="#3b82f6"
+                options={{ showSpinner: false }}
+                showOnShallow
+              />
+            </VacancyProvider>
+          </VacanciesProvider>
+        </ThemeProvider>
+      </KeyProvider>
     </AuthProvider>
   );
 }

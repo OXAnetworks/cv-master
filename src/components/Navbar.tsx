@@ -10,7 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { IconHome } from "@tabler/icons-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Language } from "./Language";
 import User from "./User";
@@ -25,38 +25,46 @@ function includesUUID(pathname: string) {
 
 export default function Navbar() {
   let pathname = usePathname();
-  const { selectedVacancy } = useVacancy();
+  const router = useRouter();
+  const { selectedVacancy, selectedResume } = useVacancy();
 
   return (
     <div className="w-full p-4 bg-card border border-border rounded-md flex justify-between items-center">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">
+            {pathname === "/" || pathname === "/es" ? (
+              <IconHome />
+            ) : (
+              <BreadcrumbLink href="/">
                 <IconHome />{" "}
-              </Link>
-            </BreadcrumbLink>
+              </BreadcrumbLink>
+            )}
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          {/* {pathname.split("/").map((path, index) => {
-            if (path === "") return null;
-            return (
-              <>
-                <BreadcrumbItem key={path}>
-                  <BreadcrumbLink asChild className="capitalize">
-                    <Link href={pathname.split(path)[0]}>{path}</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                {index < pathname.split("/").length - 1 && (
-                  <BreadcrumbSeparator />
-                )}
-              </>
-            );
-          })} */}
-          <BreadcrumbLink>
-            {(selectedVacancy && includesUUID(pathname)) && selectedVacancy.name}
-          </BreadcrumbLink>
+          {selectedVacancy && includesUUID(pathname) && (
+            <>
+              <BreadcrumbSeparator />
+              {selectedResume ? (
+                <BreadcrumbLink
+                  className="cursor-pointer"
+                  onClick={() => {
+                    router.back();
+                  }}
+                >
+                  {selectedVacancy.name}
+                </BreadcrumbLink>
+              ) : (
+                <BreadcrumbLink>{selectedVacancy.name}</BreadcrumbLink>
+              )}
+            </>
+          )}
+
+          {selectedResume && includesUUID(pathname) && (
+            <>
+              <BreadcrumbSeparator />
+              <BreadcrumbLink>{selectedResume.result.name}</BreadcrumbLink>
+            </>
+          )}
         </BreadcrumbList>
       </Breadcrumb>
 

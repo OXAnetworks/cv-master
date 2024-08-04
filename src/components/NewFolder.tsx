@@ -48,7 +48,7 @@ export default function NewFolder() {
     title: z
       .string()
       .min(4, t("NEW_VACANCY_ERROR_MIN"))
-      .max(40, t("NEW_VACANCY_ERROR_MAX")),
+      .max(52, t("NEW_VACANCY_ERROR_MAX")),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({

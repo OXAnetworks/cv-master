@@ -20,7 +20,7 @@ export async function POST(request) {
     });
   }
 
-  console.log("🚀 ~ POST ~ path:", path);
+  // console.log("🚀 ~ POST ~ path:", path);
 
   const params = {
     Bucket: process.env.BUCKET,
@@ -38,7 +38,7 @@ export async function POST(request) {
 
     // Envía la lista de archivos como respuesta
     const files = data.Contents.map((item) => item.Key);
-    console.log("🚀 ~ POST ~ files:", files);
+    // console.log("🚀 ~ POST ~ files:", files);
     return new Response(JSON.stringify(files), { status: 200 });
   } catch (error) {
     console.error(`Error al obtener los archivos: ${error.message}`);

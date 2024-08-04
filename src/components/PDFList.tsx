@@ -6,6 +6,7 @@ import PDFFile from "./PDFFile";
 import { CVResult } from "@/lib/type";
 import { Separator } from "./ui/separator";
 import CVResultProfile from "./CVResultProfile";
+import { useTranslation } from "react-i18next";
 
 interface PDFListProps {
   list: CVResult[];
@@ -18,6 +19,8 @@ export default function PDFList({
   selectedFiles,
   setSelectedFiles,
 }: PDFListProps) {
+  const [t] = useTranslation("global");
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -69,7 +72,7 @@ export default function PDFList({
 
   if (list.length > 0) {
     return (
-      <div className="w-full h-full bg-muted/50 dark:bg-muted/20 p-4 rounded-lg flex flex-col gap-4">
+      <div className="w-full max-h-full bg-muted/50 dark:bg-muted/20 p-4 rounded-lg flex flex-col gap-4 overflow-hidden">
         <div
           className={`w-full h-20 p-4 rounded-lg border-4 border-border border-dashed flex justify-center items-center gap-2 ${
             isDragging ? "bg-blue-100 border-blue-400" : ""
@@ -81,9 +84,7 @@ export default function PDFList({
           onClick={handleClick}
         >
           <IconFiles size={72} className="text-muted-foreground" />
-          <p className="text-muted-foreground text-sm">
-            Arrastra aquí o selecciona los archivos
-          </p>
+          <p className="text-muted-foreground text-sm">{t("DRAG_HERE")}</p>
           <input
             type="file"
             ref={inputRef}
@@ -96,12 +97,14 @@ export default function PDFList({
             <> {selectedFiles.length} archivo(s) cargado(s)</>
           )}
         </div>
-        {list.map((result) => (
-          <>
-            <Separator />
-            <CVResultProfile key={result.name} {...result} />
-          </>
-        ))}
+        <div className="h-full space-y-4 overflow-y-auto">
+          {list.map((result) => (
+            <div className="w-full flex flex-col gap-4" key={result.id}>
+              <Separator />
+              <CVResultProfile {...result} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   } else {
@@ -117,9 +120,7 @@ export default function PDFList({
         onClick={handleClick}
       >
         <IconFiles size={72} className="text-muted-foreground" />
-        <p className="text-muted-foreground text-sm">
-          Arrastra aquí o selecciona los archivos
-        </p>
+        <p className="text-muted-foreground text-sm">{t("DRAG_HERE")}</p>
         <input
           type="file"
           ref={inputRef}

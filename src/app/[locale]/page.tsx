@@ -3,36 +3,17 @@
 import Folder from "@/components/Folder";
 import NewFolder from "@/components/NewFolder";
 import { useAuth } from "@/context/AuthContext";
+import { useVacancies } from "@/context/VacanciesContext";
 import { Vacancy } from "@/lib/type";
 import { IconFolderFilled } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const { user } = useAuth();
-  const [data, setData] = useState<Vacancy[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { vacancies, loading, fetchData } = useVacancies();
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const response = await fetch("/api/get-vacancies");
-
-      if (response.ok) {
-        const data = await response.json();
-        setData(data);
-      } else {
-        console.error("Failed to fetch");
-      }
-      setLoading(false);
-    };
-
-    if (user) {
-      fetchData();
-    } else {
-      setData([]);
-      setLoading(false);
-    }
-  }, [user]);
+    fetchData();
+  }, []);
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
@@ -52,7 +33,7 @@ export default function Home() {
               </div>
             </div>
           ))
-        : data.map((folder) => <Folder key={folder.id} {...folder} />)}
+        : vacancies.map((folder) => <Folder key={folder.id} {...folder} />)}
     </div>
   );
 }

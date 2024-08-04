@@ -22,5 +22,40 @@
   "VACANCY_EXPERIENCE": "Experiencia",
   "VACANCY_EXPERIENCE_PLACEHOLDER": "p.ej. 2",
 
-  "DRAG_HERE": "Arrastra aquí o haz clic para seleccionar"
+  "DRAG_HERE": "Arrastra aquí o haz clic para seleccionar",
+
+  "REMAINING_TIME": "Tiempo restante",
+  "SECOND": "segundo",
+  "MINUTE": "minuto",
+  "HOUR": "hora",
+
+  "SUMMARY": "Resumen",
+  "WHY": "¿Por qué la decisión?",
+  "SKILLS": "Habilidades",
+  "EXPERIENCE": "Experiencia",
+  "CONTACT": "Contacto",
+
+  "OPEN": "Abrir",
+  "DELETE": "Eliminar",
+
+  "DELETING": "Eliminando...",
+  "DELETED": "Eliminado",
+  "DELETED_ERROR": "Error al eliminar",
+  "ARE_YOU_SURE_YOU_WANT_TO_DELETE": "Estás seguro de que quieres eliminar la vacante",
+  "THIS_ACTION_IS_IRREVERSIBLE": "Esta acción es irreversible y perderás toda la información asociada a esta vacante.",
+
+  "APPROVED": "Aprobado",
+  "REJECTED": "Rechazado",
+
+  "SOMETHING_HERE": "Hey, hace falta algo aquí 👀",
+  "NO_API_KEY": "No se ha encontrado una clave de API. Por favor, añade una clave de OpenAI",
+  "SOMETHING_WEIRD": "Algo raro está pasando aquí",
+  "MISSING_OPENAI_KEY": "Falta la clave de OpenAI",
+
+  "SHOMETHING_WRONG": "Algo salió mal",
+
+  "TOGGLE_THEME": "Cambiar tema",
+  "LIGHT": "Claro",
+  "DARK": "Oscuro",
+  "SYSTEM": "Sistema"
 }

@@ -66,4 +66,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  .pixelated {
+    image-rendering: pixelated;
+  }
+
+  .crisp-edges {
+    image-rendering: crisp-edges;
+  }
 }

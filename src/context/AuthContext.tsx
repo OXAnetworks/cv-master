@@ -43,9 +43,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === "SIGNED_IN") {
-          getUser();
+          // getUser();
         } else if (event === "SIGNED_OUT") {
           setUser(null);
+          router.push("/");
         }
       }
     );

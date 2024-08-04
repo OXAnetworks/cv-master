@@ -44,8 +44,6 @@ const { object } = await generateObject({
   prompt: prompt,
 });
 
-console.log(object);
-
 ```
 _____
 

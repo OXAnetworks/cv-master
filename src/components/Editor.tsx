@@ -12,6 +12,7 @@ import { CVResult, Vacancy } from "@/lib/type";
 import { IconLoader2 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export default function Editor({
   vacancy,
@@ -20,11 +21,13 @@ export default function Editor({
   vacancy: Vacancy | null;
   CVList: CVResult[];
 }) {
-  const { setSelectedVacancy } = useVacancy();
+  const { setSelectedVacancy, setSelectedResume } = useVacancy();
+  const { key, form } = useKey();
 
   const [t, i18n] = useTranslation("global");
 
   const [loading, setLoading] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(0);
 
   const [formData, setFormData] = useState({
     vacancyName: vacancy?.name || "",
@@ -33,6 +36,7 @@ export default function Editor({
     skills: vacancy?.requirements?.skills || "",
     experience: vacancy?.requirements?.experience || "",
     language: vacancy?.requirements?.language || i18n.language || "",
+    openaikey: key || "",
     files: [],
   });
 
@@ -40,7 +44,20 @@ export default function Editor({
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-  const { key } = useKey();
+  const formatRemainingTime = (milliseconds: number) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const hoursDisplay =
+      hours > 0 ? `${hours} ${t("HOUR")}${hours > 1 ? "s" : ""} ` : "";
+    const minutesDisplay =
+      minutes > 0 ? `${minutes} ${t("MINUTE")}${minutes > 1 ? "s" : ""} ` : "";
+    const secondsDisplay = `${seconds} ${t("SECOND")}${seconds > 1 ? "s" : ""}`;
+
+    return `${hoursDisplay}${minutesDisplay}${secondsDisplay}`.trim();
+  };
 
   const handleChange = (
     e:
@@ -64,14 +81,26 @@ export default function Editor({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    /*if (key === "" || key === undefined) {
-      alert("Please enter your OpenAI API key");
+
+    if (!key || key === "") {
+      form.setError("key", {
+        type: "manual",
+        message: t("SOMETHING_HERE"),
+      });
       return;
-    }*/
+    }
+
     setLoading(true);
+
+    const averageTimePerFile = 20000; // Tiempo promedio por archivo en milisegundos (20 segundos)
+    const totalFiles = selectedFiles.length;
+    const totalTime = totalFiles * averageTimePerFile;
+
+    setRemainingTime(totalTime);
 
     for (const file of selectedFiles) {
       const data = new FormData();
+      data.append("name", formData.vacancyName);
       data.append("profileSearch", formData.profileSearch);
       data.append("skills", formData.skills);
       data.append("experience", formData.experience);
@@ -96,21 +125,35 @@ export default function Editor({
         }
 
         const result = await response.json();
-        console.log("Success:", result);
-        setList((list) => [...list, result.candidate]);
+        // console.log("Success:", result);
+        setList((list) => [...list, result]);
+
+        // Restar el tiempo promedio por archivo una vez que se resuelve la promesa
+        setRemainingTime((prevTime) =>
+          Math.max(prevTime - averageTimePerFile, 0)
+        );
       } catch (error) {
         console.error("Error:", error);
+        // Restar el tiempo promedio por archivo incluso si hay un error
+        setRemainingTime((prevTime) =>
+          Math.max(prevTime - averageTimePerFile, 0)
+        );
+
+        toast.error(t("SHOMETHING_WRONG"));
+        break;
       }
     }
 
     setLoading(false);
-    console.log("DONE");
+    setRemainingTime(0); // Restablece el tiempo restante a 0 al finalizar
   };
 
   useEffect(() => {
     if (vacancy) {
       setSelectedVacancy(vacancy);
     }
+
+    setSelectedResume(null);
   }, [vacancy]);
 
   return (
@@ -173,6 +216,13 @@ export default function Editor({
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? <IconLoader2 className="animate-spin" /> : "Submit"}
           </Button>
+          {loading && remainingTime > 0 && (
+            <div className="flex justify-end text-sm opacity-50">
+              <p>
+                {t("REMAINING_TIME")}: {formatRemainingTime(remainingTime)}
+              </p>
+            </div>
+          )}
         </div>
       </div>
       <PDFList

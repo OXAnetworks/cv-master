@@ -1,4 +1,61 @@
 {
-    "NEW_VACANCY_TITLE": "Create a new vacancy",
-    "NEW_VACANCY_DESCRIPTION": "You will create a new vacancy where you will be able to add search criteria, vacancy details and candidate CVs for evaluation."
+  "NEW_VACANCY_TITLE": "Create a New Vacancy",
+  "NEW_VACANCY_DESCRIPTION": "You will create a new vacancy where you can add search criteria, vacancy details, and candidate CVs for evaluation.",
+  "NEW_VACANCY_PLACEHOLDER": "Developer, Jun 2024",
+  "NEW_VACANCY_ERROR_MIN": "The title must be at least 4 characters long",
+  "NEW_VACANCY_ERROR_MAX": "The title must be less than 50 characters long",
+  "NEW_VACANCY_ERROR_REQUIRED": "The title is required",
+  "NEW_VACANCY_ERROR_VALID": "The title is not valid",
+
+  "MY_ACCOUNT": "My Account",
+  "LOGOUT": "Log Out",
+  "LOGIN": "Log In",
+
+  "VACANCY_NAME": "Vacancy Name",
+  "VACANCY_NAME_PLACEHOLDER": "Developer, Jun 2024",
+  "VACANCY_PROFILE_SEARCH": "Search Profile",
+  "VACANCY_PROFILE_SEARCH_PLACEHOLDER": "e.g., Developer, Designer, etc.",
+  "VACANCY_PROFILE_SEARCH_ERROR_MIN": "The search profile must be at least 4 characters long",
+  "VACANCY_SKILLS": "Skills",
+  "VACANCY_SKILLS_PLACEHOLDER": "e.g., JavaScript, React, Node.js",
+  "VACANCY_SKILLS_ERROR_MIN": "Skills must be at least 4 characters long",
+  "VACANCY_EXPERIENCE": "Experience",
+  "VACANCY_EXPERIENCE_PLACEHOLDER": "e.g., 2",
+
+  "DRAG_HERE": "Drag here or click to select",
+
+  "REMAINING_TIME": "Remaining Time",
+  "SECOND": "second",
+  "MINUTE": "minute",
+  "HOUR": "hour",
+
+  "SUMMARY": "Summary",
+  "WHY": "Why the decision?",
+  "SKILLS": "Skills",
+  "EXPERIENCE": "Experience",
+  "CONTACT": "Contact",
+
+  "OPEN": "Open",
+  "DELETE": "Delete",
+
+  "DELETING": "Deleting...",
+  "DELETED": "Deleted",
+  "DELETED_ERROR": "Error deleting",
+  "ARE_YOU_SURE_YOU_WANT_TO_DELETE": "Are you sure you want to delete the vacancy?",
+  "THIS_ACTION_IS_IRREVERSIBLE": "This action is irreversible and you will lose all information associated with this vacancy.",
+
+  "APPROVED": "Approved",
+  "REJECTED": "Rejected",
+
+  "SOMETHING_HERE": "Hey, something is missing here 👀",
+  "NO_API_KEY": "No API key found. Please add an OpenAI key.",
+  "SOMETHING_WEIRD": "Something weird is happening here",
+  "MISSING_OPENAI_KEY": "OpenAI key is missing",
+
+  "SHOMETHING_WRONG": "Something went wrong",
+
+  "TOGGLE_THEME": "Toggle Theme",
+  "LIGHT": "Light",
+  "DARK": "Dark",
+  "SYSTEM": "System"
 }
