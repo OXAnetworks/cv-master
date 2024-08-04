@@ -3,7 +3,8 @@ import { generateText } from "ai";
 
 export async function POST(request) {
   try {
-    const { key } = await request.json();
+    const { key, language } = await request.json();
+    const lng = language === "es" ? "español" : "ingles";
 
     if (!key) {
       return new Response(
@@ -22,8 +23,9 @@ export async function POST(request) {
     const { text } = await generateText({
       model: openai("gpt-4o-mini"),
       temperature: 1,
-      prompt:
-        "Genera un mensaje corto y gracioso, con un estilo de humor sarcástico, que diga que tu clave de API de OpenAI es correcta y ha sido guardada, pero que no está del todo segura. El mensaje debe ser aleatorio y único cada vez que se genere.",
+      prompt: `Genera un mensaje corto y gracioso, con un estilo de humor sarcástico, que diga que tu clave de API de OpenAI es correcta y ha sido guardada, pero que no está del todo segura. El mensaje debe ser aleatorio y único cada vez que se genere. 
+     Que el mensaje sea en ${lng}.
+      `,
     });
 
     return new Response(

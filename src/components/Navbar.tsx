@@ -10,11 +10,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { IconHome } from "@tabler/icons-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Language } from "./Language";
 import User from "./User";
 import { useVacancy } from "@/context/VacancySelect";
+import { useRouter } from "next13-progressbar";
 
 const uuidRegex =
   /[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i;

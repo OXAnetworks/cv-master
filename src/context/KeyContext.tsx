@@ -23,6 +23,7 @@ import {
 } from "@tabler/icons-react";
 import { Progress } from "@/components/ui/progress";
 import { ProgressIndicator } from "@radix-ui/react-progress";
+import { Language } from "@/components/Language";
 
 // Define el tipo de dato para el contexto
 type KeyContextType = {
@@ -39,7 +40,7 @@ export const KeyProvider: React.FC<{
   children: React.ReactNode;
   apiKey: string | undefined;
 }> = ({ children, apiKey }) => {
-  const [t] = useTranslation("global");
+  const [t, i18n] = useTranslation("global");
 
   const [key, setKey] = useState<string | undefined>(apiKey || "");
   const [isFocused, setIsFocused] = useState(false);
@@ -80,6 +81,7 @@ export const KeyProvider: React.FC<{
       },
       body: JSON.stringify({
         key: values.key,
+        language: i18n.language,
       }),
     });
 
@@ -174,7 +176,9 @@ export const KeyProvider: React.FC<{
               </Button>
             </form>
           </Form>
-          {message && <p>{message}</p>}
+          {message && (
+            <p className="text-sm text-muted-foreground">{message}</p>
+          )}
         </div>
       )}
     </KeyContext.Provider>
